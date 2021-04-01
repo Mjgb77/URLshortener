@@ -3,11 +3,11 @@ package com.company.shortener;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class LocalStorage implements StorageManager {
+public class InMemoryStorageManager implements StorageManager {
     private HashMap<String, Integer> idByURL;
     private Vector<String> URLs;
 
-    public LocalStorage() {
+    public InMemoryStorageManager() {
         idByURL = new HashMap<>();
         URLs = new Vector<>();
     }
@@ -23,7 +23,7 @@ public class LocalStorage implements StorageManager {
     }
 
     @Override
-    public int pushURL(String url) {
+    public int addURL(String url) {
         int newID = URLs.size();
         URLs.add(url);
         idByURL.put(url, newID);

@@ -1,36 +1,42 @@
 package com.company;
 
-import com.company.shortener.LocalStorage;
+import com.company.shortener.InMemoryStorageManager;
 import com.company.shortener.Shortener;
+import com.company.shortener.ShortenerEncoder;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     public static void main(String[] args) {
-        LocalStorage storage = new LocalStorage();
-        Shortener shortener = new Shortener(storage);
+        InMemoryStorageManager storage = new InMemoryStorageManager();
+        ShortenerEncoder shortenerEncoder = new ShortenerEncoder(ALPHABET);
+        Shortener shortener = new Shortener(storage, shortenerEncoder);
 
         Scanner in = new Scanner(System.in);
 
         while (true) {
-            String operation = in.next();
-            if (operation.equals("finish")) {
-                break;
-            }
+            Optional<Operation> operation = Operation.getOperation(in.next());
 
-            if (operation.equals("encode")) {
-                String value = in.next();
-
-                System.out.println("Your shortened URL is: " + shortener.encode(value));
-            } else if (operation.equals("decode")) {
-                String value = in.next();
-                String originalURL = shortener.decode(value);
-
-                if (originalURL == null) System.out.println("You haven't shortened that url before");
-                else System.out.println("Your original URL is: " + originalURL);
-            } else {
+            if (operation.isEmpty()) {
                 System.out.println("Invalid operation");
+            } else {
+                switch (operation.get()) {
+                    case FINISH:
+                        return;
+                    case SHORTEN:
+                        System.out.println("Your shortened URL is: " + shortener.toShortURL(in.next()));
+                        break;
+                    case EXPAND:
+                        String originalURL = shortener.toOriginalURL(in.next());
+
+                        if (originalURL == null) System.out.println("You haven't shortened that url before");
+                        else System.out.println("Your original URL is: " + originalURL);
+
+                        break;
+                }
             }
         }
     }
