@@ -1,0 +1,42 @@
+package com.company.shortener;
+
+import java.util.HashMap;
+import java.util.Vector;
+
+public class LocalStorage implements StorageManager {
+    private HashMap<String, Integer> idByURL;
+    private Vector<String> URLs;
+
+    public LocalStorage() {
+        idByURL = new HashMap<>();
+        URLs = new Vector<>();
+    }
+
+    @Override
+    public boolean hasURL(String url) {
+        return idByURL.containsKey(url);
+    }
+
+    @Override
+    public int getID(String url) {
+        return idByURL.get(url);
+    }
+
+    @Override
+    public int pushURL(String url) {
+        int newID = URLs.size();
+        URLs.add(url);
+        idByURL.put(url, newID);
+        return newID;
+    }
+
+    @Override
+    public boolean hasID(int id) {
+        return 0 <= id && id < URLs.size();
+    }
+
+    @Override
+    public String getFromID(int id) {
+        return URLs.elementAt(id);
+    }
+}
